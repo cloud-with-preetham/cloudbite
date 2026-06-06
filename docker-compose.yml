@@ -1,0 +1,39 @@
+services:
+  auth-service:
+    build:
+      context: ./services/auth-service
+      dockerfile: Dockerfile
+    container_name: cloudbite-auth-service
+    ports:
+      - "8000:8000"
+    environment:
+      ENVIRONMENT: development
+      DATABASE_URL: postgresql://cloudbite:cloudbite@postgres:5432/cloudbite_auth
+      JWT_SECRET_KEY: dev-secret-key
+      JWT_ALGORITHM: HS256
+      ACCESS_TOKEN_EXPIRE_MINUTES: 30
+    depends_on:
+      - postgres
+    networks:
+      - cloudbite-network
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: cloudbite-postgres
+    environment:
+      POSTGRES_USER: cloudbite
+      POSTGRES_PASSWORD: cloudbite
+      POSTGRES_DB: cloudbite_auth
+    ports:
+      - "5432:5432"
+    volumes:
+      - cloudbite-postgres-data:/var/lib/postgresql/data
+    networks:
+      - cloudbite-network
+
+volumes:
+  cloudbite-postgres-data:
+
+networks:
+  cloudbite-network:
+    driver: bridge
