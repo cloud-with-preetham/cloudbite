@@ -1,7 +1,8 @@
 from fastapi import FastAPI
+from sqlalchemy import text
 
 from app.config import settings
-from app.database import Base, engine
+from app.database import Base, SessionLocal, engine
 from app.routes import router
 from app import models
 
@@ -22,6 +23,21 @@ def health_check():
         "status": "healthy",
         "environment": settings.environment,
     }
+
+
+@app.get("/health/db")
+def database_health_check():
+    db = SessionLocal()
+
+    try:
+        db.execute(text("SELECT 1"))
+        return {
+            "service": "auth-service",
+            "database": "postgresql",
+            "status": "connected",
+        }
+    finally:
+        db.close()
 
 
 app.include_router(router, prefix="/api/v1/auth", tags=["auth"])
