@@ -8,9 +8,9 @@ class Settings(BaseSettings):
 
     database_url: str = "postgresql://cloudbite:cloudbite@postgres:5432/cloudbite_auth"
 
-    jwt_secret_key: str = "change-this-secret-key"
+    jwt_secret_key: str = "cloudbite-super-secret-key"
     jwt_algorithm: str = "HS256"
-    access_token_expire_minutes: int = 30
+    access_token_expire_minutes: int = 60
 
     class Config:
         env_file = ".env"
