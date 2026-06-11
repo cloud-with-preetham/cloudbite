@@ -31,8 +31,38 @@ services:
     networks:
       - cloudbite-network
 
+  restaurant-postgres:
+    image: postgres:16
+
+    container_name: cloudbite-restaurant-postgres
+
+    environment:
+      POSTGRES_USER: cloudbite
+      POSTGRES_PASSWORD: cloudbite
+      POSTGRES_DB: cloudbite_restaurant
+
+    ports:
+      - "5433:5432"
+
+    volumes:
+      - restaurant_postgres_data:/var/lib/postgresql/data
+
+  restaurant-service:
+    build:
+      context: ./services/restaurant-service
+
+    container_name: cloudbite-restaurant-service
+
+    ports:
+      - "8001:8001"
+
+    depends_on:
+      - restaurant-postgres
+
 volumes:
   cloudbite-postgres-data:
+  postgres_data:
+  restaurant_postgres_data:
 
 networks:
   cloudbite-network:
